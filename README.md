@@ -1,4 +1,4 @@
-# visualizer-fe
+# visualizer-web
 
 ## Project setup
 ```
