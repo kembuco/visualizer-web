@@ -12,8 +12,10 @@
   "dependencies": {
     "@deck.gl/core": "^7.0.0",
     "@deck.gl/layers": "^7.0.0",
+    "@types/d3": "^5.7.2",
     "axios": "^0.18.0",
     "core-js": "^2.6.5",
+    "d3": "^5.9.2",
     "mapbox-gl": "^0.53.1",
     "vue": "^2.6.10",
     "vue-class-component": "^7.0.2",
