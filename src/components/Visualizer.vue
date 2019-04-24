@@ -31,6 +31,12 @@ export default class Visualizer extends Vue {
       .force("center", d3.forceCenter(box.width / 2, box.height / 2))
       .force('link', d3.forceLink().links(graph.edges).id((d: any) => d.id))
       .on("tick", this.ticked);
+
+    d3.select(this.$el).select("svg")
+    .style("pointer-events", "all")
+    .call(d3.zoom().scaleExtent([.2, 10]).on("zoom", () => {
+      d3.select(this.$el).selectAll("g").attr("transform", d3.event.transform)
+    }));
   }
 
   ticked() {
