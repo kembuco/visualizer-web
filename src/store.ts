@@ -19,7 +19,21 @@ export default new Vuex.Store({
     async loadGraph({ commit }) {
       const graph = await GraphService.describe();
 
+      //TODO: pryper type annotations
+      graph.nodes = graph.nodes.map((node: any) => {
+        node.id = node.pubKey;
+        return node;
+      });
+
+      graph.edges = graph.edges.map((edge: any) => {
+        edge.source = edge.node1Pub;
+        edge.target = edge.node2Pub;
+        return edge;
+      });
+
       commit("setGraph", graph);
+
+      return graph;
     }
   }
 });
