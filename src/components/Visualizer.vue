@@ -89,6 +89,7 @@ export default class Visualizer extends Vue {
       .select(".nodes")
       .selectAll<SVGCircleElement, {}>("circle")
       .data(this.graph.nodes);
+      
     u.enter()
       .append("circle")
       .merge(u)
@@ -102,6 +103,7 @@ export default class Visualizer extends Vue {
         this.setSelectedNode(
           this.selectedNode && d.id === this.selectedNode.id ? null : d
         );
+        this.initializeSimulation();
       });
 
     u.exit().remove();
