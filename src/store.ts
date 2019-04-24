@@ -1,21 +1,63 @@
 import Vue from "vue";
-import Vuex from "vuex";
+import Vuex, { Store } from "vuex";
 import GraphService from "./service/graph-service";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    graph: null
+    graph: {
+      nodes: [],
+      edges: []
+    },
+    selectedNode: null
   },
 
   mutations: {
     setGraph(state, graph) {
       state.graph = graph;
+    },
+
+    setSelectedNode(state, node) {
+      state.selectedNode = node;
+    }
+  },
+
+  getters: {
+    filteredGraph(state) {
+      const selected: any = state.selectedNode;
+      const validNodes = new Set();
+      const graph = {
+        nodes: [...state.graph.nodes],
+        edges: [...state.graph.edges]
+      };
+
+      if (selected !== null) {
+        graph.edges = graph.edges.filter((edge: any) => {
+          const matches =
+            edge.source.id === selected.id || edge.target.id === selected.id;
+
+          if (matches) {
+            validNodes.add(edge.source.id).add(edge.target.id);
+          }
+
+          return matches;
+        });
+
+        graph.nodes = graph.nodes.filter((node: any) =>
+          validNodes.has(node.id)
+        );
+      }
+
+      return graph;
     }
   },
 
   actions: {
+    setSelectedNode({ commit }, node) {
+      commit("setSelectedNode", node);
+    },
+
     async loadGraph({ commit }) {
       const graph = await GraphService.describe();
 

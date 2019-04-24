@@ -9,17 +9,26 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { Action, State } from "vuex-class";
+import { Action, Getter, State } from "vuex-class";
 import * as d3 from "d3";
 import { Selection, BaseType } from "d3";
 
 @Component
 export default class Visualizer extends Vue {
   @Action loadGraph: any;
-  @State graph: any; // Define graph interface types
+  @Action setSelectedNode: any;
+  @State selectedNode: any;
+  @Getter("filteredGraph") graph: any; // Define graph interface types
+  simulation: any;
 
   async mounted() {
     const graph = await this.loadGraph();
+
+    this.initializeSimulation();
+    this.initializePanAndZoom();
+  }
+
+  initializeSimulation() {
     const container = d3.select(this.$el).node();
     const box = container
       ? container.getBoundingClientRect()
@@ -28,18 +37,29 @@ export default class Visualizer extends Vue {
           height: 600
         };
 
-    d3.forceSimulation(graph.nodes)
+    this.simulation = d3
+      .forceSimulation(this.graph.nodes)
       .force("charge", d3.forceManyBody().strength(-200))
       .force("center", d3.forceCenter(box.width / 2, box.height / 2))
       .force(
         "link",
         d3
           .forceLink()
-          .links(graph.edges)
+          .links(this.graph.edges)
           .id((d: any) => d.id)
       )
-      .on("tick", this.ticked);
+      .stop();
 
+    // Run through the simulation as fast as possible
+    for (let i = 0; i < 50; ++i) {
+      this.simulation.tick();
+    }
+
+    // Draw the result
+    this.ticked();
+  }
+
+  initializePanAndZoom() {
     d3.select(this.$el)
       .select("svg")
       .style("pointer-events", "all")
@@ -79,9 +99,9 @@ export default class Visualizer extends Vue {
       .attr("cx", (d: any) => d.x)
       .attr("cy", (d: any) => d.y)
       .on("click", (d: any) => {
-        d3.select(d3.event.srcElement)
-          .transition()
-          .attr("r", 20);
+        this.setSelectedNode(
+          this.selectedNode && d.id === this.selectedNode.id ? null : d
+        );
       });
 
     u.exit().remove();
