@@ -15,6 +15,7 @@
 }
 
 .visualizer-container {
+  display: flex;
   flex: 1;
 }
 

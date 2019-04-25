@@ -13,11 +13,11 @@
   color: #fff;
 }
 .visualizer {
-  height: 100%;
+  display: flex;
+  flex: 1;
 }
 .visualizer-canvas {
-  height: 100%;
-  width: 100%;
+  flex: 1;
 }
 </style>
 
@@ -56,7 +56,7 @@ export default class Visualizer extends Vue {
 
     this.simulation = d3
       .forceSimulation(this.graph.nodes)
-      .force("charge", d3.forceManyBody().strength(-1000))
+      .force("charge", d3.forceManyBody().strength(this.selectedNode ? -5500 : -2500))
       .force("center", d3.forceCenter(box.width / 2, box.height / 2))
       .force(
         "link",
@@ -126,9 +126,9 @@ export default class Visualizer extends Vue {
       .append("text")
       .text((d: any) => d.alias)
       .merge(u)
-      .attr("fill", "#fff")
-      .attr("x", (d: any) => d.x)
-      .attr("y", (d: any) => d.y);
+      .attr("fill", "#555")
+      .attr("x", (d: any) => d.x + this.ifSelectedNode(d, 23, 10))
+      .attr("y", (d: any) => d.y + this.ifSelectedNode(d, 11, 4));
 
     u.exit().remove();
   }

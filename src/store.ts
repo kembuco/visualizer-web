@@ -11,7 +11,7 @@ export default new Vuex.Store({
       edges: []
     },
     selectedNode: null,
-    viewLabels: false
+    viewLabels: true
   },
 
   mutations: {
