@@ -32,7 +32,7 @@ ul {
 }
 
 body {
-  background: #000;
+  background: #f6f6f6;
 }
 
 ol,
@@ -43,5 +43,12 @@ ul {
 img {
   max-width: 100%;
   height: auto;
+}
+
+#app {
+  display: flex;
+  height: 100vh;
+  border: 3px;
+  flex-direction: column;
 }
 </style>

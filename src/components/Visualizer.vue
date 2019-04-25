@@ -1,11 +1,26 @@
 <template>
-  <div id="content" style="height:100vh">
-    <svg id="canvas" width="100%" height="100%">
+  <div class="visualizer">
+    <svg class="visualizer-canvas">
       <g class="links"></g>
       <g class="nodes"></g>
+      <g class="labels"></g>
     </svg>
   </div>
 </template>
+
+<style scoped>
+.labels text {
+  color: #fff;
+}
+.visualizer {
+  height: 100%;
+}
+.visualizer-canvas {
+  height: 100%;
+  width: 100%;
+}
+</style>
+
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
@@ -18,8 +33,10 @@ export default class Visualizer extends Vue {
   @Action loadGraph: any;
   @Action setSelectedNode: any;
   @State selectedNode: any;
+  @State viewLabels: any;
   @Getter("filteredGraph") graph: any; // Define graph interface types
   simulation: any;
+  zoom: any;
 
   async mounted() {
     const graph = await this.loadGraph();
@@ -39,7 +56,7 @@ export default class Visualizer extends Vue {
 
     this.simulation = d3
       .forceSimulation(this.graph.nodes)
-      .force("charge", d3.forceManyBody().strength(-200))
+      .force("charge", d3.forceManyBody().strength(-1000))
       .force("center", d3.forceCenter(box.width / 2, box.height / 2))
       .force(
         "link",
@@ -60,16 +77,18 @@ export default class Visualizer extends Vue {
   }
 
   initializePanAndZoom() {
-    d3.select(this.$el)
-      .select("svg")
-      .style("pointer-events", "all")
-      .call(d3
+    const zoom = this.zoom =d3
         .zoom()
         .scaleExtent([0.2, 10])
         .on(
           "zoom",
           this.onZoom
-        ) as (selection: Selection<BaseType, {}, null, undefined>, ...args: any[]) => void);
+        ) as (selection: Selection<BaseType, {}, null, undefined>, ...args: any[]) => void;
+
+    d3.select(this.$el)
+      .select("svg")
+      .style("pointer-events", "all")
+      .call(zoom);
   }
 
   onZoom() {
@@ -78,9 +97,40 @@ export default class Visualizer extends Vue {
       .attr("transform", d3.event.transform);
   }
 
+  zoomAndPan(x: number, y: number, scale: number) {
+    const transition = d3.select(this.$el).selectAll("g").transition().duration(1000);
+    this.zoom.translateTo(transition, x, y);
+    this.zoom.scaleTo(transition, scale);
+  }
+
   ticked() {
     this.updateLinks();
     this.updateNodes();
+    if (this.viewLabels) {
+      this.updateLabels();
+    }
+  }
+
+  ifSelectedNode(d: any, success: any, failure: any) {
+    return this.selectedNode && d.id === this.selectedNode.id ? success : failure;
+  }
+
+  updateLabels() {
+    const u = d3
+      .select(this.$el)
+      .select(".labels")
+      .selectAll<SVGTextElement, {}>("text")
+      .data(this.graph.nodes);
+      
+    u.enter()
+      .append("text")
+      .text((d: any) => d.alias)
+      .merge(u)
+      .attr("fill", "#fff")
+      .attr("x", (d: any) => d.x)
+      .attr("y", (d: any) => d.y);
+
+    u.exit().remove();
   }
 
   updateNodes() {
@@ -93,18 +143,18 @@ export default class Visualizer extends Vue {
     u.enter()
       .append("circle")
       .merge(u)
-      .attr("r", 7)
+      .attr("r", (d: any) => this.ifSelectedNode(d, 21, 7))
       .attr("stroke", "#dedede")
       .attr("stroke-width", "1px")
       .attr("fill", (d: any) => d.color)
       .attr("cx", (d: any) => d.x)
       .attr("cy", (d: any) => d.y)
       .on("click", (d: any) => {
-        this.setSelectedNode(
-          this.selectedNode && d.id === this.selectedNode.id ? null : d
-        );
+        this.setSelectedNode(this.ifSelectedNode(d, null, d));
         this.initializeSimulation();
-      });
+        this.zoomAndPan(d.x, d.y, 1);
+      })
+      .append("text");
 
     u.exit().remove();
   }
