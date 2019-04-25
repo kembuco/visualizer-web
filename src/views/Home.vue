@@ -1,7 +1,6 @@
 <template>
   <div class="home">
-    <div class="info-container">
-    </div>
+    <div class="info-container"></div>
     <div class="visualizer-container">
       <Visualizer />
     </div>

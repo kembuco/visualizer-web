@@ -21,7 +21,6 @@
 }
 </style>
 
-
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { Action, Getter, State } from "vuex-class";
@@ -56,7 +55,10 @@ export default class Visualizer extends Vue {
 
     this.simulation = d3
       .forceSimulation(this.graph.nodes)
-      .force("charge", d3.forceManyBody().strength(this.selectedNode ? -5500 : -2500))
+      .force(
+        "charge",
+        d3.forceManyBody().strength(this.selectedNode ? -5500 : -2500)
+      )
       .force("center", d3.forceCenter(box.width / 2, box.height / 2))
       .force(
         "link",
@@ -78,19 +80,19 @@ export default class Visualizer extends Vue {
 
   initializePanAndZoom() {
     this.zoom = d3
-        .zoom()
-        .scaleExtent([0.2, 10])
-        .on(
-          "zoom",
-          this.onZoom
-        ) as (selection: Selection<BaseType, {}, null, undefined>, ...args: any[]) => void;
+      .zoom()
+      .scaleExtent([0.2, 10])
+      .on("zoom", this.onZoom) as (
+      selection: Selection<BaseType, {}, null, undefined>,
+      ...args: any[]
+    ) => void;
 
     d3.select(this.$el)
       .select("svg")
       .style("pointer-events", "all")
       .call(this.zoom);
 
-    this.zoomAndPan(0, 0, .6)      
+    this.zoomAndPan(0, 0, 0.6);
   }
 
   onZoom() {
@@ -100,7 +102,11 @@ export default class Visualizer extends Vue {
   }
 
   zoomAndPan(x: number, y: number, scale: number) {
-    const transition = d3.select(this.$el).selectAll("g").transition().duration(1000);
+    const transition = d3
+      .select(this.$el)
+      .selectAll("g")
+      .transition()
+      .duration(1000);
     this.zoom.translateTo(transition, x, y);
     this.zoom.scaleTo(transition, scale);
   }
@@ -112,7 +118,9 @@ export default class Visualizer extends Vue {
   }
 
   ifSelectedNode(d: any, success: any, failure: any) {
-    return this.selectedNode && d.id === this.selectedNode.id ? success : failure;
+    return this.selectedNode && d.id === this.selectedNode.id
+      ? success
+      : failure;
   }
 
   updateLabels() {
@@ -139,7 +147,7 @@ export default class Visualizer extends Vue {
       .select(".nodes")
       .selectAll<SVGCircleElement, {}>("circle")
       .data(this.graph.nodes);
-      
+
     u.enter()
       .append("circle")
       .merge(u)

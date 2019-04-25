@@ -4,6 +4,10 @@
   </div>
 </template>
 
+<script>
+import "milligram/dist/milligram.min.css";
+</script>
+
 <style>
 html {
   box-sizing: border-box;
