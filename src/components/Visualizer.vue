@@ -106,9 +106,7 @@ export default class Visualizer extends Vue {
   ticked() {
     this.updateLinks();
     this.updateNodes();
-    if (this.viewLabels) {
-      this.updateLabels();
-    }
+    this.updateLabels();
   }
 
   ifSelectedNode(d: any, success: any, failure: any) {
@@ -121,11 +119,11 @@ export default class Visualizer extends Vue {
       .select(".labels")
       .selectAll<SVGTextElement, {}>("text")
       .data(this.graph.nodes);
-      
+
     u.enter()
       .append("text")
-      .text((d: any) => d.alias)
       .merge(u)
+      .text((d: any) => d.alias)
       .attr("fill", "#555")
       .attr("x", (d: any) => d.x + this.ifSelectedNode(d, 23, 10))
       .attr("y", (d: any) => d.y + this.ifSelectedNode(d, 11, 4));
