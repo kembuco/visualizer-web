@@ -77,7 +77,7 @@ export default class Visualizer extends Vue {
   }
 
   initializePanAndZoom() {
-    const zoom = this.zoom =d3
+    this.zoom = d3
         .zoom()
         .scaleExtent([0.2, 10])
         .on(
@@ -88,7 +88,9 @@ export default class Visualizer extends Vue {
     d3.select(this.$el)
       .select("svg")
       .style("pointer-events", "all")
-      .call(zoom);
+      .call(this.zoom);
+
+    this.zoomAndPan(0, 0, .6)      
   }
 
   onZoom() {
@@ -151,6 +153,7 @@ export default class Visualizer extends Vue {
         this.setSelectedNode(this.ifSelectedNode(d, null, d));
         this.initializeSimulation();
         this.zoomAndPan(d.x, d.y, 1);
+        this.onZoom();
       })
       .append("text");
 
