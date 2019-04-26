@@ -1,6 +1,6 @@
 <template>
   <div class="visualizer">
-    <img v-if="loading" class="loader" src="../assets/loader.gif"/>
+    <img v-if="loading" class="loader" src="../assets/loader.gif" />
     <svg class="visualizer-canvas">
       <g class="links"></g>
       <g class="nodes"></g>
@@ -14,9 +14,9 @@
   color: #fff;
 }
 .visualizer {
+  position: relative;
   display: flex;
   flex: 1;
-  position: relative;
 }
 .visualizer-canvas {
   flex: 1;
@@ -59,7 +59,10 @@ export default class Visualizer extends Vue {
 
   initializeSimulation() {
     const container = d3.select(this.$el).node();
-    const box = d3.select(this.$el).node()!.getBoundingClientRect();
+    const box = d3
+      .select(this.$el)
+      .node()!
+      .getBoundingClientRect();
 
     this.simulation = d3
       .forceSimulation(this.graph.nodes)
@@ -142,9 +145,9 @@ export default class Visualizer extends Vue {
       .append("text")
       .merge(u)
       .text((d: any) => d.alias)
-      .attr("fill", "#555")
+      .attr("fill", "#444")
       .attr("x", (d: any) => d.x + this.ifSelectedNode(d, 23, 10))
-      .attr("y", (d: any) => d.y + this.ifSelectedNode(d, 11, 4));
+      .attr("y", (d: any) => d.y + this.ifSelectedNode(d, 12, 5));
 
     u.exit().remove();
   }

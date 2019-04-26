@@ -1,33 +1,86 @@
 <template>
   <div class="info-container-content">
-    <span v-if="!node">Click a node to view information</span>
-    <div v-if="node">
+    <div v-if="networkInfo && !selectedNode">
+      <div class="info-item">
+        <div class="info-item-label">Average Out Degree</div>
+        <div class="info-item-value">{{ networkInfo.avgOutDegree }}</div>
+      </div>
+      <div class="info-item">
+        <div class="info-item-label">Max Out Degree</div>
+        <div class="info-item-value">
+          {{ format(networkInfo.maxOutDegree, ",") }}
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-item-label">Number of Nodes</div>
+        <div class="info-item-value">
+          {{ format(networkInfo.numNodes, ",") }}
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-item-label">Number of Channels</div>
+        <div class="info-item-value">
+          {{ format(networkInfo.numChannels, ",") }}
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-item-label">Total Network Capacity</div>
+        <div class="info-item-value">
+          {{ format(networkInfo.totalNetworkCapacity, ",") }}
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-item-label">Average Channel Size</div>
+        <div class="info-item-value">
+          {{ format(networkInfo.avgChannelSize, ",") }}
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-item-label">Minimum Channel Size</div>
+        <div class="info-item-value">
+          {{ format(networkInfo.minChannelSize, ",") }}
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-item-label">Maximum Channel Size</div>
+        <div class="info-item-value">
+          {{ format(networkInfo.maxChannelSize, ",") }}
+        </div>
+      </div>
+
+      <div class="instructions">
+        Click a node to view it's information
+      </div>
+    </div>
+
+    <div v-if="selectedNode">
       <div class="info-item">
         <div class="info-item-label">Alias</div>
-        <div class="info-item-value">{{node.alias}}</div>
+        <div class="info-item-value">{{ selectedNode.alias }}</div>
       </div>
-
       <div class="info-item">
         <div class="info-item-label">Public Key</div>
-        <div class="info-item-value">{{node.pubKey}}</div>
+        <div class="info-item-value">{{ selectedNode.pubKey }}</div>
       </div>
-
       <div class="info-item">
         <div class="info-item-label">Addresses</div>
         <div class="info-item-value">
-          <span v-if="!node.addresses || !node.addresses.length">No addresses</span>
+          <span v-if="!hasAddresses">No addresses</span>
           <ul>
-            <li v-for="item in node.addresses" :key="item.id">
+            <li v-for="item in selectedNode.addresses" :key="item.id">
               {{ item.addr }} ({{ item.network }})
             </li>
           </ul>
         </div>
       </div>
-
       <div class="info-item">
         <div class="info-item-label">Color</div>
         <div class="info-item-value">
-          <span class="color-box" :style="{background: node.color}"></span> {{node.color}}
+          <div
+            class="color-box"
+            :style="{ background: selectedNode.color }"
+          ></div>
+          {{ selectedNode.color }}
         </div>
       </div>
     </div>
@@ -42,9 +95,10 @@
   font-weight: 500;
 }
 pre {
-  color: #555
+  color: #404040;
 }
-ul, li {
+ul,
+li {
   margin-bottom: 0;
 }
 .color-box {
@@ -53,15 +107,36 @@ ul, li {
   display: inline-block;
   border: 1px solid #fff;
 }
-</style>
 
+.instructions {
+  border-top: 1px solid #999;
+  padding-top: 10px;
+  font-style: italic;
+}
+</style>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { State } from "vuex-class";
+import { State, Action } from "vuex-class";
+import { format } from "d3";
 
 @Component
 export default class Info extends Vue {
-  @State("selectedNode") node: any;
+  @State selectedNode: any;
+  @State networkInfo: any;
+  @Action loadNetworkInfo: any;
+
+  async mounted() {
+    await this.loadNetworkInfo();
+  }
+
+  get hasAddresses() {
+    const { addresses } = this.selectedNode;
+    return addresses && addresses.length;
+  }
+
+  format(value: number, specifier: string) {
+    return format(specifier)(value);
+  }
 }
 </script>

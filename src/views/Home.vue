@@ -24,18 +24,19 @@
 .info-container {
   flex: 0 0 300px;
   background: #444;
-  color: #fbfbfb;
+  border-right: 1px solid #bfbfbf;
+  color: #f6f6f6;
   display: flex;
   flex-direction: column;
 }
 
 .info-container h3 {
-    background-color: rgba(255,165,24,1);
-    text-align: center;
-    padding: 15px;
-    margin-bottom: 0;
-    color: #262525;
-    letter-spacing: .1rem;
+  background-color: rgba(255, 165, 24, 1);
+  text-align: center;
+  padding: 15px;
+  margin-bottom: 0;
+  color: #262525;
+  letter-spacing: 0.1rem;
 }
 
 .info-container-content {

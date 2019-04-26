@@ -11,7 +11,8 @@ export default new Vuex.Store({
       edges: []
     },
     selectedNode: null,
-    viewLabels: true
+    viewLabels: true,
+    networkInfo: null
   },
 
   mutations: {
@@ -20,7 +21,11 @@ export default new Vuex.Store({
     },
 
     setSelectedNode(state, node) {
-      state.selectedNode = node ? {...node} : null;
+      state.selectedNode = node ? { ...node } : null;
+    },
+
+    setNetworkInfo(state, info) {
+      state.networkInfo = info;
     }
   },
 
@@ -77,6 +82,14 @@ export default new Vuex.Store({
       commit("setGraph", graph);
 
       return graph;
+    },
+
+    async loadNetworkInfo({ commit }) {
+      const info = await GraphService.getNetworkInfo();
+
+      commit("setNetworkInfo", info);
+
+      return info;
     }
   }
 });

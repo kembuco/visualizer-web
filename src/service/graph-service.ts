@@ -13,4 +13,15 @@ export default class GraphService {
       throw e;
     }
   }
+
+  static async getNetworkInfo() {
+    try {
+      const response = await client.get(`${endpoint}/networkInfo`);
+
+      return response.data;
+    } catch (e) {
+      // TODO: gracefully handle error
+      throw e;
+    }
+  }
 }
