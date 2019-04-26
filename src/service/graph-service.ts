@@ -24,4 +24,15 @@ export default class GraphService {
       throw e;
     }
   }
+
+  static async getNodeInfo() {
+    try {
+      const response = await client.get(`${endpoint}/nodeInfo`);
+
+      return response.data;
+    } catch (e) {
+      // TODO: gracefully handle error
+      throw e;
+    }
+  }
 }

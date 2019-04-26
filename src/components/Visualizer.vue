@@ -144,7 +144,7 @@ export default class Visualizer extends Vue {
     u.enter()
       .append("text")
       .merge(u)
-      .text((d: any) => d.alias)
+      .text((d: any) => d.alias || d.pubKey.substr(0, 20))
       .attr("fill", "#444")
       .attr("x", (d: any) => d.x + this.ifSelectedNode(d, 23, 10))
       .attr("y", (d: any) => d.y + this.ifSelectedNode(d, 12, 5));

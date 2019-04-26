@@ -42,7 +42,6 @@
 .info-container-content {
   padding: 15px;
   max-width: 300px;
-  overflow: auto;
   flex: 1;
 }
 </style>
