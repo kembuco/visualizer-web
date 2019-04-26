@@ -20,7 +20,7 @@ export default new Vuex.Store({
     },
 
     setSelectedNode(state, node) {
-      state.selectedNode = {...node};
+      state.selectedNode = node ? {...node} : null;
     }
   },
 

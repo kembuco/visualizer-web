@@ -1,5 +1,6 @@
 <template>
   <div class="visualizer">
+    <img v-if="loading" class="loader" src="../assets/loader.gif"/>
     <svg class="visualizer-canvas">
       <g class="links"></g>
       <g class="nodes"></g>
@@ -15,9 +16,18 @@
 .visualizer {
   display: flex;
   flex: 1;
+  position: relative;
 }
 .visualizer-canvas {
   flex: 1;
+}
+.loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
 }
 </style>
 
@@ -36,22 +46,20 @@ export default class Visualizer extends Vue {
   @Getter("filteredGraph") graph: any; // Define graph interface types
   simulation: any;
   zoom: any;
+  loading: boolean = false;
 
   async mounted() {
-    const graph = await this.loadGraph();
+    this.loading = true;
+    await this.loadGraph();
 
     this.initializeSimulation();
     this.initializePanAndZoom();
+    this.loading = false;
   }
 
   initializeSimulation() {
     const container = d3.select(this.$el).node();
-    const box = container
-      ? container.getBoundingClientRect()
-      : {
-          width: 800,
-          height: 600
-        };
+    const box = d3.select(this.$el).node()!.getBoundingClientRect();
 
     this.simulation = d3
       .forceSimulation(this.graph.nodes)
@@ -88,7 +96,7 @@ export default class Visualizer extends Vue {
     ) => void;
 
     d3.select(this.$el)
-      .select("svg")
+      .select("svg.visualizer-canvas")
       .style("pointer-events", "all")
       .call(this.zoom);
 
